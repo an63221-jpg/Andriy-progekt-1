@@ -40,3 +40,67 @@ def main():
 
 if __name__ == "__main__":
     main()
+    #19/08/26/#
+    import time
+from decorators import log_action, memoize, notify_client, validate_price
+
+
+class ServiceManager:
+
+    def __init__(self):
+        self.orders = {}
+        self.services = []
+        self.parts = []
+        self.next_order_id = 1
+
+    @log_action
+    @validate_price
+    def create_order(self, client_name, service_name, price):
+        order_id = self.next_order_id
+        self.orders[order_id] = {
+            "client": client_name,
+            "service": service_name,
+            "price": price,
+            "status": "New",
+        }
+        self.next_order_id += 1
+        return order_id
+
+    @log_action
+    @notify_client
+    def update_status(self, order_id, new_status):
+        if order_id in self.orders:
+            self.orders[order_id]["status"] = new_status
+            return True
+        return False
+
+    @log_action
+    def delete_order(self, order_id):
+        return self.orders.pop(order_id, None)
+
+    @log_action
+    @validate_price
+    def add_service(self, service_name, price):
+        self.services.append({"name": service_name, "price": price})
+        return True
+
+    @log_action
+    @validate_price
+    def add_part(self, part_name, price):
+        self.parts.append({"name": part_name, "price": price})
+        return True
+
+
+# Тестовий запуск
+if __name__ == "__main__":
+    manager = ServiceManager()
+
+    print("--- 1. Створення замовлень ---")
+    manager.create_order("Іваненко", "Заміна масла", 800)
+    manager.create_order("Петренко", "Діагностика підвіски", -50)
+
+    print("\n--- 2. Оновлення статусу ---")
+    manager.update_status(1, "Completed")
+
+    print("\n--- 3. Видалення замовлення ---")
+    manager.delete_order(1)
