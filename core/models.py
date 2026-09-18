@@ -110,3 +110,63 @@ class RepairOrder:
             ],
             "total_price": self.calculate_total()
         }
+
+    #HW3
+
+
+from dataclasses import dataclass, field
+from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
+
+
+class OrderStatus(Enum):
+    CREATED = "Created"
+    IN_PROGRESS = "In Progress"
+    COMPLETED = "Completed"
+    CANCELLED = "Cancelled"
+
+
+@dataclass
+class Client:
+    name: str
+    phone: str
+    email: str = ""
+    notes: str = ""
+
+    def display(self) -> str:
+        return f"{self.name} | {self.phone}"
+
+
+@dataclass
+class Service:
+    name: str
+    price: float
+    duration_minutes: int
+
+    def price_per_hour(self) -> float:
+        if self.duration_minutes == 0:
+            return 0.0
+        return self.price / (self.duration_minutes / 60)
+
+    def formatted(self) -> str:
+        return f"{self.name} — {self.price:.0f} грн ({self.duration_minutes} хв)"
+
+
+@dataclass
+class Order:
+    client: Client
+    service: Service
+    status: OrderStatus = OrderStatus.CREATED
+    created_at: datetime = field(default_factory=datetime.now)
+    notes: str = ""
+
+    def total_price(self) -> float:
+        return self.service.price
+
+    def summary(self) -> str:
+        date_str = self.created_at.strftime("%Y-%m-%d %H:%M")
+        return f"[{self.status.value}] {self.client.name} — {self.service.name} — {self.total_price():.0f} грн | {date_str}"
+
+    def is_active(self) -> bool:
+        return self.status in (OrderStatus.CREATED, OrderStatus.IN_PROGRESS)
