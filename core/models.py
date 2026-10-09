@@ -173,3 +173,53 @@ class Order:
 
     def is_active(self) -> bool:
         return self.status in (OrderStatus.CREATED, OrderStatus.IN_PROGRESS)
+
+class Customer:
+
+    def __init__(self, name: str, phone: str):
+        if not name.strip():
+            raise ValueError("Ім'я не може бути порожнім")
+        self.name = name
+        self.phone = phone
+
+
+class Part:
+
+    def __init__(self, name: str, price: float):
+        if price < 0:
+            raise ValueError("Ціна не може бути від'ємною")
+        self.name = name
+        self.price = float(price)
+
+
+class Service:
+
+    def __init__(self, name: str, price: float):
+        if price < 0:
+            raise ValueError("Ціна не може бути від'ємною")
+        self.name = name
+        self.price = float(price)
+
+
+class RepairOrder:
+
+    def __init__(self, customer: Customer, car_model: str):
+        self.customer = customer
+        self.car_model = car_model
+        self.parts = []
+        self.services = []
+        self.status = "Open"
+
+    def add_part(self, part: Part):
+        self.parts.append(part)
+
+    def add_service(self, service: Service):
+        self.services.append(service)
+
+    def calculate_total(self) -> float:
+        parts_sum = sum(p.price for p in self.parts)
+        services_sum = sum(s.price for s in self.services)
+        return parts_sum + services_sum
+
+    def complete_order(self):
+        self.status = "Completed"
