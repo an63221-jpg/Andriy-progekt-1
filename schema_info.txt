@@ -1,0 +1,77 @@
+  Column   |            Type             | Collation | Nullable |               Default               
+------------+-----------------------------+-----------+----------+-------------------------------------
+ id         | integer                     |           | not null | nextval('clients_id_seq'::regclass)
+ name       | character varying(150)      |           | not null | 
+ phone      | character varying(20)       |           |          | 
+ email      | character varying(100)      |           |          | 
+ created_at | timestamp without time zone |           |          | now()                                           
+Indexes:
+    "clients_pkey" PRIMARY KEY, btree (id)
+Referenced by:
+    TABLE "orders" CONSTRAINT "orders_client_id_fkey" FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+
+
+service_manager=# 
+service_manager=# \d services
+                                           Table "public.services"
+      Column      |            Type             | Collation | Nullable |               Default                
+------------------+-----------------------------+-----------+----------+--------------------------------------
+ id               | integer                     |           | not null | nextval('services_id_seq'::regclass)
+ name             | character varying(150)      |           | not null | 
+ description      | text                        |           |          | 
+ price            | numeric(10,2)               |           | not null | 
+ duration_minutes | integer                     |           |          |                                           
+ created_at       | timestamp without time zone |           |          | now()
+Indexes:
+    "services_pkey" PRIMARY KEY, btree (id)
+Referenced by:
+    TABLE "orders" CONSTRAINT "orders_service_id_fkey" FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE RESTRICT
+
+
+service_manager=# \d orders
+                                         Table "public.orders"
+   Column    |            Type             | Collation | Nullable |              Default               
+-------------+-----------------------------+-----------+----------+------------------------------------
+ id          | integer                     |           | not null | nextval('orders_id_seq'::regclass)
+ client_id   | integer                     |           | not null | 
+ service_id  | integer                     |           | not null | 
+ order_date  | date                        |           | not null | 
+ status      | character varying(50)       |           |          | 'created'::character varying                   
+ total_price | numeric(10,2)               |           | not null | 
+ notes       | text                        |           |          | 
+ created_at  | timestamp without time zone |           |          | now()
+Indexes:
+    "orders_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "orders_client_id_fkey" FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+    "orders_service_id_fkey" FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE RESTRICT
+
+                                                         
+service_manager=# \d inventory
+                                         Table "public.inventory"
+    Column    |            Type             | Collation | Nullable |                Default                
+--------------+-----------------------------+-----------+----------+---------------------------------------
+ id           | integer                     |           | not null | nextval('inventory_id_seq'::regclass)
+ name         | character varying(150)      |           | not null | 
+ quantity     | integer                     |           | not null | 
+ unit_price   | numeric(10,2)               |           |          | 
+ min_quantity | integer                     |           |          | 0                                             
+ created_at   | timestamp without time zone |           |          | now()
+Indexes:
+    "inventory_pkey" PRIMARY KEY, btree (id)
+
+
+service_manager=# \q
+PS C:\Users\User\Documents\githubAndriy\Andriy-progekt-1>New-Item schema_info.txt
+
+
+    Каталог: C:\Users\User\Documents\githubAndriy\Andriy-
+    progekt-1
+
+
+Mode                 LastWriteTime         Length Name   
+----                 -------------         ------ ----   
+-a----        12.10.2026     19:19              0 schema_
+                                                  info.tx
+                                                  t      
+
